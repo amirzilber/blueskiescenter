@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <link rel="preload" href="img/background.png" as="image">
+  <style>html{background-color:#d9eefa;}</style><title>משחק זיכרון</title>
+  <link rel="stylesheet" href="style.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Heebo:wght@300;500;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/></head>
+<body>
+  <header>
+  <a href="https://www.blueskiescenter.com" class="logo-link"><img src="img/logo.png" alt="לוגו" /></a>
+  <h1>משחק זיכרון</h1>
+  <a class="header-btn" href="https://www.blueskiescenter.com">דף הבית</a>
+</header>
+  <main>
+    <div class="game-container">
+      <div class="instructions">
+        <p>התאימו זוגות של כרטיסים זהים כדי לנצח. לחצו על כרטיס כדי לחשוף את הדמות הרגשית – זכרו את מיקומה!</p>
+      </div>
+      <div id="memoryGrid" class="memory-grid"></div>
+      <p id="memoryMessage" style="font-weight:bold;text-align:center;margin-top:20px;"></p>
+      <a href="strength.html" class="back-link">חזרה לתפריט חיזוק</a>
+    </div>
+  </main>
+  <script>
+    // Use custom emotion images instead of emoji. Each card references an image file.
+    const images = [
+      { src: 'img/emotion_happy.png', key: 'happy' },
+      { src: 'img/emotion_sad.png', key: 'sad' },
+      { src: 'img/emotion_angry.png', key: 'angry' },
+      { src: 'img/emotion_fear.png', key: 'fear' },
+      { src: 'img/emotion_surprised.png', key: 'surprised' },
+      { src: 'img/emotion_proud.png', key: 'proud' }
+    ];
+    let cards = [];
+    let firstCard = null;
+    let secondCard = null;
+    let lockBoard = false;
+    let matches = 0;
+    const grid = document.getElementById('memoryGrid');
+    const message = document.getElementById('memoryMessage');
+    function initGame() {
+      // duplicate and shuffle the images array to create pairs
+      cards = [];
+      images.forEach((img) => {
+        cards.push({ src: img.src, id: Math.random() });
+        cards.push({ src: img.src, id: Math.random() });
+      });
+      cards.sort(() => Math.random() - 0.5);
+      // render cards
+      grid.innerHTML = '';
+      cards.forEach((card) => {
+        const div = document.createElement('div');
+        div.className = 'memory-card';
+        // store the image source on the element for comparison
+        div.dataset.src = card.src;
+        // create an img element hidden by default
+        div.innerHTML = `<img src="${card.src}" style="width:60px;height:60px;display:none;" />`;
+        div.addEventListener('click', () => flipCard(div));
+        grid.appendChild(div);
+      });
+    }
+    function flipCard(cardEl) {
+      if (lockBoard || cardEl.classList.contains('matched') || cardEl === firstCard) return;
+      cardEl.classList.add('flipped');
+      // reveal the image inside this card
+      const img = cardEl.querySelector('img');
+      if (img) img.style.display = 'block';
+      if (!firstCard) {
+        firstCard = cardEl;
+        return;
+      }
+      secondCard = cardEl;
+      checkMatch();
+    }
+    function checkMatch() {
+      const isMatch = firstCard.dataset.src === secondCard.dataset.src;
+      if (isMatch) {
+        firstCard.classList.add('matched');
+        secondCard.classList.add('matched');
+        // create a star animation at the location of the second card
+        const rect = secondCard.getBoundingClientRect();
+        const star = document.createElement('div');
+        star.className = 'flying-star';
+        star.textContent = '★';
+        star.style.left = (rect.right - 20) + 'px';
+        star.style.top = (rect.top - 5 + window.scrollY) + 'px';
+        document.body.appendChild(star);
+        star.addEventListener('animationend', () => star.remove());
+        matches++;
+        resetTurn();
+        if (matches === images.length) {
+          message.textContent = 'כל הכבוד! התאמתם את כל הזוגות.';
+        }
+      } else {
+        lockBoard = true;
+        setTimeout(() => {
+          firstCard.classList.remove('flipped');
+          secondCard.classList.remove('flipped');
+          // hide the images again
+          const img1 = firstCard.querySelector('img');
+          const img2 = secondCard.querySelector('img');
+          if (img1) img1.style.display = 'none';
+          if (img2) img2.style.display = 'none';
+          resetTurn();
+        }, 1000);
+      }
+    }
+    function resetTurn() {
+      [firstCard, secondCard] = [null, null];
+      lockBoard = false;
+    }
+    initGame();
+  </script>
+</body>
+</html>

@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <link rel="preload" href="img/background.png" as="image">
+  <style>html{background-color:#d9eefa;}</style><title>הוקרת תודה</title>
+  <link rel="stylesheet" href="style.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Heebo:wght@300;500;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/></head>
+<body>
+  <header>
+  <a href="https://www.blueskiescenter.com" class="logo-link"><img src="img/logo.png" alt="לוגו" /></a>
+  <h1>הוקרת תודה</h1>
+  <a class="header-btn" href="https://www.blueskiescenter.com">דף הבית</a>
+</header>
+  <main>
+    <div class="game-container">
+      <div class="instructions">
+        <p>כתבו שלושה דברים עליהם אתם מודים היום. מילוי הטופס יעזור לכם להעריך את הדברים החיוביים בחיים.</p>
+      </div>
+      <form id="gratitudeForm" class="gratitude-form">
+        <input type="text" id="g1" placeholder="דבר שאתם מודים עליו" required>
+        <input type="text" id="g2" placeholder="דבר נוסף שאתם מודים עליו" required>
+        <input type="text" id="g3" placeholder="ועוד דבר קטן" required>
+        <button type="submit">שלחו</button>
+      </form>
+      <p id="gratitudeOutput" style="font-weight:bold; margin-top:20px;"></p>
+      <div id="notesContainer" style="margin-top:20px;"></div>
+      <a href="activities.html" class="back-link">חזרה לתפריט פעילויות</a>
+    </div>
+  </main>
+  <script>
+    const form = document.getElementById('gratitudeForm');
+    const output = document.getElementById('gratitudeOutput');
+    const notesContainer = document.getElementById('notesContainer');
+    function loadNotes() {
+      const stored = localStorage.getItem('gratitudeNotes');
+      let notes = [];
+      if (stored) {
+        try { notes = JSON.parse(stored); } catch (e) { notes = []; }
+      }
+      // clear container
+      notesContainer.innerHTML = '';
+      notes.forEach(note => {
+        const div = document.createElement('div');
+        div.className = 'sticky-note';
+        div.textContent = note;
+        notesContainer.appendChild(div);
+      });
+    }
+    function saveNote(note) {
+      const stored = localStorage.getItem('gratitudeNotes');
+      let notes = [];
+      if (stored) {
+        try { notes = JSON.parse(stored); } catch (e) { notes = []; }
+      }
+      notes.push(note);
+      localStorage.setItem('gratitudeNotes', JSON.stringify(notes));
+      loadNotes();
+    }
+    form.addEventListener('submit', (e) => {
+      e.preventDefault();
+      const v1 = document.getElementById('g1').value.trim();
+      const v2 = document.getElementById('g2').value.trim();
+      const v3 = document.getElementById('g3').value.trim();
+      const combined = [v1, v2, v3].filter(Boolean).join(' \n');
+      if (combined) {
+        output.textContent = 'תודה ששיתפתם! רישמנו את תודתכם.';
+        saveNote(combined);
+        form.reset();
+      } else {
+        output.textContent = 'אנא כתבו לפחות דבר אחד שאתם מודים עליו.';
+      }
+    });
+    // on page load, display existing notes
+    loadNotes();
+  </script>
+</body>
+</html>

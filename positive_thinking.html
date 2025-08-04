@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <link rel="preload" href="img/background.png" as="image">
+  <style>html{background-color:#d9eefa;}</style><title>חשיבה חיובית</title>
+  <link rel="stylesheet" href="style.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Heebo:wght@300;500;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/></head>
+<body>
+  <header>
+  <a href="https://www.blueskiescenter.com" class="logo-link"><img src="img/logo.png" alt="לוגו" /></a>
+  <h1>חשיבה חיובית</h1>
+  <a class="header-btn" href="https://www.blueskiescenter.com">דף הבית</a>
+</header>
+  <main>
+    <div class="game-container">
+      <div class="instructions">
+        <p>לחצו על כל משפט כדי להפוך אותו למשפט חיובי. כל משפט שתהפכו יצבע בצבע חמים ויספור כוכב אחד של חשיבה חיובית.</p>
+      </div>
+      <ul id="phraseList" class="positive-list"></ul>
+      <p id="positiveCount" style="font-weight:bold;text-align:center;margin-top:20px;"></p>
+      <a href="activities.html" class="back-link">חזרה לתפריט פעילויות</a>
+    </div>
+  </main>
+  <script>
+    // Array of negative and positive phrase pairs. When the page is loaded
+    // we'll randomly shuffle these so שכל כניסה תציג סדר משפטים שונה.
+    const phrases = [
+      { neg: 'אני לא יכול לעשות את זה', pos: 'אני יכול לעשות את זה' },
+      { neg: 'אני מפחד לטעות', pos: 'אני מוכן ללמוד מטעויות' },
+      { neg: 'אין לי חברים', pos: 'אני יכול למצוא חברים חדשים' },
+      { neg: 'אני לא מספיק טוב', pos: 'אני משתפר מיום ליום' },
+      { neg: 'זה קשה מדי בשבילי', pos: 'אני אתמודד עם זה בהדרגה' }
+    ];
+    const listEl = document.getElementById('phraseList');
+    const countEl = document.getElementById('positiveCount');
+    let positiveCount = 0;
+    function shuffle(array) {
+      for (let i = array.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [array[i], array[j]] = [array[j], array[i]];
+      }
+    }
+    function renderList() {
+      listEl.innerHTML = '';
+      // shuffle phrases on each rendering so order changes per entry
+      shuffle(phrases);
+      phrases.forEach((item) => {
+        const li = document.createElement('li');
+        li.className = 'positive-item';
+        li.textContent = item.neg;
+        li.addEventListener('click', () => handleClick(li, item));
+        listEl.appendChild(li);
+      });
+    }
+    function handleClick(li, item) {
+      if (li.classList.contains('positive')) return; // already positive
+      li.textContent = item.pos;
+      li.classList.add('positive');
+      positiveCount++;
+      updateCount();
+      // create a flying star at the end of the line
+      const rect = li.getBoundingClientRect();
+      const star = document.createElement('div');
+      star.className = 'flying-star';
+      star.textContent = '★';
+      star.style.left = (rect.right - 20) + 'px';
+      star.style.top = (rect.top - 5 + window.scrollY) + 'px';
+      document.body.appendChild(star);
+      star.addEventListener('animationend', () => star.remove());
+      if (positiveCount === phrases.length) {
+        countEl.textContent = 'כל הכבוד! הפכתם את כל המשפטים לחיוביים!';
+      }
+    }
+    function updateCount() {
+      if (positiveCount < phrases.length) {
+        countEl.textContent = 'מספר משפטים חיוביים: ' + positiveCount;
+      }
+    }
+    renderList();
+    updateCount();
+  </script>
+</body>
+</html>

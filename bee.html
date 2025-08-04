@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <link rel="preload" href="img/background.png" as="image">
+  <style>html{background-color:#d9eefa;}</style><title>נשימת דבורה</title>
+  <link rel="stylesheet" href="style.css">
+  <style>
+    .hum-btn {
+      display: inline-block;
+      margin-top: 20px;
+      padding: 12px 25px;
+      background-color: var(--secondary);
+      border-radius: 8px;
+      border: none;
+      cursor: pointer;
+      font-weight: bold;
+    }
+    .hum-btn:active {
+      background-color: var(--accent);
+      color: #fff;
+    }
+  </style>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Heebo:wght@300;500;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/></head>
+<body>
+  <header>
+  <a href="https://www.blueskiescenter.com" class="logo-link"><img src="img/logo.png" alt="לוגו" /></a>
+  <h1>נשימת דבורה</h1>
+  <a class="header-btn" href="https://www.blueskiescenter.com">דף הבית</a>
+</header>
+  <main>
+    <div class="game-container">
+      <div class="instructions">
+        <p>שבו בנוחות. קחו שאיפה איטית דרך האף לארבע שניות, החזיקו ארבע שניות, ובנשיפה פלטו צליל זמזום כמו דבורה. לחצו והחזיקו על הכפתור בזמן שאתם מזמזמים – כך הדבורה תעוף אל הפרח.</p>
+      </div>
+      <div style="text-align:center; position: relative; height: 180px;">
+        <img src="img/bee.png" id="bee" class="bee" alt="דבורה" style="position:absolute; top:40px; left:10px;" />
+        <img src="img/flower.png" id="flower" alt="פרח" style="width:80px;height:80px; position:absolute; bottom:0; right:20px;" />
+      </div>
+      <button id="humBtn" class="hum-btn">זמזם</button>
+      <p id="beeMsg" style="text-align:center;font-weight:bold;margin-top:10px;"></p>
+      <a href="breathing.html" class="back-link">חזרה לעמוד נשימות</a>
+    </div>
+  </main>
+  <script>
+
+const bee = document.getElementById('bee');
+const flower = document.getElementById('flower');
+const humBtn = document.getElementById('humBtn');
+const beeMsg = document.getElementById('beeMsg');
+let humming = false;
+const startPos = { left: bee.offsetLeft, top: bee.offsetTop };
+
+function getTargetOffset() {
+  return flower.getBoundingClientRect().left - bee.getBoundingClientRect().left - 20; // 20px padding
+}
+
+function startHum(e) {
+  e.preventDefault();
+  if (humming) return;
+  humming = true;
+  beeMsg.textContent = 'זמזמו...';
+  const deltaX = getTargetOffset();
+  bee.style.transition = 'transform 4s linear';
+  bee.style.transform = `translateX(${deltaX}px)`;
+}
+
+function stopHum() {
+  if (!humming) return;
+  humming = false;
+  beeMsg.textContent = '';
+  bee.style.transition = 'transform 1.5s ease-out';
+  bee.style.transform = 'translateX(0)';
+}
+
+humBtn.addEventListener('mousedown', startHum);
+humBtn.addEventListener('touchstart', startHum);
+document.addEventListener('mouseup', stopHum);
+document.addEventListener('touchend', stopHum);
+
+</script>
+</body>
+</html>

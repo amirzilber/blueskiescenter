@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <link rel="preload" href="img/background.png" as="image">
+  <style>html{background-color:#d9eefa;}</style><title>ציור קשוב</title>
+  <link rel="stylesheet" href="style.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Heebo:wght@300;500;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/></head>
+<body>
+  <header>
+  <a href="https://www.blueskiescenter.com" class="logo-link"><img src="img/logo.png" alt="לוגו" /></a>
+  <h1>ציור קשוב</h1>
+  <a class="header-btn" href="https://www.blueskiescenter.com">דף הבית</a>
+</header>
+  <main>
+    <div class="game-container">
+      <div class="instructions">
+        <p>בחרו צבע מהפלטה והתאזרו בסבלנות – ציירו באיטיות וצפו במכחול שלכם נע לאט על הדף. המטרה היא ליהנות מהתנועה ולא מהתוצאה.</p>
+      </div>
+      <div id="palette" class="palette"></div>
+      <canvas id="drawingCanvas" class="drawing-area"></canvas>
+      <div class="drawing-controls">
+        <button id="clearCanvas">נקה ציור</button>
+        <button id="saveCanvas">שמור ציור</button>
+      </div>
+      <a href="activities.html" class="back-link">חזרה לתפריט פעילויות</a>
+    </div>
+  </main>
+  <script>
+    // Setup palette colors
+    const paletteColors = ['#FF6F61', '#F5B6B6', '#9FC9E3', '#FFE5A0', '#A7D6D3', '#D8BFD8'];
+    const paletteContainer = document.getElementById('palette');
+    const canvas = document.getElementById('drawingCanvas');
+    const ctx = canvas.getContext('2d');
+    let drawing = false;
+    let currentColor = paletteColors[0];
+
+    // Create palette elements
+    paletteColors.forEach((color, index) => {
+      const swatch = document.createElement('div');
+      swatch.className = 'palette-color';
+      swatch.style.backgroundColor = color;
+      if (index === 0) swatch.classList.add('selected');
+      swatch.addEventListener('click', () => selectColor(swatch, color));
+      paletteContainer.appendChild(swatch);
+    });
+
+    function selectColor(swatch, color) {
+      document.querySelectorAll('.palette-color').forEach(el => el.classList.remove('selected'));
+      swatch.classList.add('selected');
+      currentColor = color;
+    }
+
+    // Canvas drawing
+    canvas.width = 300;
+    canvas.height = 300;
+    ctx.lineWidth = 4;
+    ctx.lineCap = 'round';
+
+    canvas.addEventListener('mousedown', startDraw);
+    canvas.addEventListener('touchstart', (e) => startDraw(e.touches[0]));
+    canvas.addEventListener('mousemove', draw);
+    canvas.addEventListener('touchmove', (e) => draw(e.touches[0]));
+    window.addEventListener('mouseup', endDraw);
+    window.addEventListener('touchend', endDraw);
+
+    function startDraw(e) {
+      drawing = true;
+      ctx.beginPath();
+      const { x, y } = getPos(e);
+      ctx.moveTo(x, y);
+    }
+
+    function draw(e) {
+      if (!drawing) return;
+      const { x, y } = getPos(e);
+      ctx.strokeStyle = currentColor;
+      ctx.lineTo(x, y);
+      ctx.stroke();
+    }
+
+    function endDraw() {
+      drawing = false;
+    }
+
+    function getPos(e) {
+      const rect = canvas.getBoundingClientRect();
+      return { x: e.clientX - rect.left, y: e.clientY - rect.top };
+    }
+
+    document.getElementById('clearCanvas').addEventListener('click', () => {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+    });
+
+    // Save the current drawing as an image file
+    document.getElementById('saveCanvas').addEventListener('click', () => {
+      const link = document.createElement('a');
+      link.href = canvas.toDataURL('image/png');
+      link.download = 'drawing.png';
+      // Trigger a click on the hidden link to download the file
+      link.click();
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <link rel="preload" href="img/background.png" as="image">
+  <style>html{background-color:#d9eefa;}</style><title>נשימת קשת</title>
+  <link rel="stylesheet" href="style.css">
+  <style>
+    /* Rainbow container for the arch breathing game */
+    .rainbow-container {
+      width: 280px;
+      height: 0;
+      overflow: hidden;
+      margin: 20px auto;
+      border-radius: 12px;
+      background-color: #f0f7fd;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+      border: 1px solid var(--primary);
+      /* Smooth open/close animation for the rainbow arch */
+      transition: height 1.2s ease-in-out;
+      display: none;
+      justify-content: center;
+      align-items: flex-end;
+    }
+    .rainbow-container img {
+      width: 100%;
+      height: auto;
+      display: block;
+    }
+  </style>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Heebo:wght@300;500;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/></head>
+<body>
+  <header>
+  <a href="https://www.blueskiescenter.com" class="logo-link"><img src="img/logo.png" alt="לוגו" /></a>
+  <h1>נשימת קשת</h1>
+  <a class="header-btn" href="https://www.blueskiescenter.com">דף הבית</a>
+</header>
+  <main>
+      <div class="game-container">
+        <div class="instructions">
+          <p>דמיינו קשת צבעונית נפתחת בשמי כחול. בעת הנשיפה, החזיקו את הכפתור כדי להרים את הקשת אל מעל הראש, ובשאיפה שחררו את הלחיצה כדי להוריד אותה ולהירגע. הפעולה מסמלת מתיחה והרפיה.</p>
+        </div>
+        <div class="rainbow-container" id="rainbowContainer">
+          <img src="img/rainbow.png" alt="קשת" />
+        </div>
+        <button id="toggle" class="btn">החזיקו ונשפו</button>
+        <a href="breathing.html" class="back-link">חזרה לעמוד נשימות</a>
+      </div>
+  </main>
+  <script>
+    const rainbowContainer = document.getElementById('rainbowContainer');
+    const button = document.getElementById('toggle');
+    let holding = false;
+    function raiseRainbow() {
+      if (holding) return;
+      holding = true;
+      rainbowContainer.style.display = 'flex';
+      // animate to full height
+      rainbowContainer.style.height = '180px';
+    }
+    function lowerRainbow() {
+      if (!holding) return;
+      holding = false;
+      // shrink height
+      rainbowContainer.style.height = '0px';
+      // hide after transition
+      // The transition duration in CSS is 1.2s; wait at least that long before hiding
+      setTimeout(() => {
+        if (!holding) {
+          rainbowContainer.style.display = 'none';
+        }
+      }, 1200);
+    }
+    button.addEventListener('mousedown', (e) => {
+      e.preventDefault();
+      raiseRainbow();
+    });
+    button.addEventListener('touchstart', (e) => {
+      e.preventDefault();
+      raiseRainbow();
+    });
+    document.addEventListener('mouseup', () => {
+      lowerRainbow();
+    });
+    document.addEventListener('touchend', () => {
+      lowerRainbow();
+    });
+  </script>
+</body>
+</html>

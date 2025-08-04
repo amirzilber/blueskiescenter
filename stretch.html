@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <link rel="preload" href="img/background.png" as="image">
+  <style>html{background-color:#d9eefa;}</style><title>אימון מתיחה</title>
+  <link rel="stylesheet" href="style.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Heebo:wght@300;500;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/></head>
+<body>
+  <header>
+  <a href="https://www.blueskiescenter.com" class="logo-link"><img src="img/logo.png" alt="לוגו"/></a>
+  <h1>אימון מתיחה</h1>
+  <a class="header-btn" href="https://www.blueskiescenter.com">דף הבית</a>
+</header>
+  <main>
+    <div class="game-container">
+      <div class="instructions">
+        <p>מתחו את ידיכם לצדדים או מעל לראש והחזיקו למשך עשר שניות. לחצו והחזיקו את הכפתור כדי לראות את ההתקדמות. כשסיימתם, נוחו ושחררו.</p>
+      </div>
+      <img src="img/stretch.png" alt="דמות מתיחה" class="stretch-img">
+      <div class="stretch-bar-container">
+        <div id="stretchBar" class="stretch-bar"></div>
+      </div>
+      <button id="stretchBtn" class="stretch-button">החזקו מתיחה</button>
+      <p id="stretchMessage" style="font-weight:bold;text-align:center;"></p>
+      <a href="strength.html" class="back-link">חזרה לתפריט חיזוק</a>
+    </div>
+  </main>
+  <script>
+    const bar = document.getElementById('stretchBar');
+    const btn = document.getElementById('stretchBtn');
+    const msg = document.getElementById('stretchMessage');
+    let interval = null;
+    let progress = 0;
+    btn.addEventListener('mousedown', startHold);
+    btn.addEventListener('touchstart', (e) => { e.preventDefault(); startHold(); });
+    window.addEventListener('mouseup', endHold);
+    window.addEventListener('touchend', endHold);
+    function startHold() {
+      if (interval) return;
+      msg.textContent = '';
+      progress = 0;
+      bar.style.width = '0%';
+      interval = setInterval(() => {
+        progress += 1;
+        if (progress > 100) progress = 100;
+        bar.style.width = progress + '%';
+        if (progress === 100) {
+          endHold();
+          msg.textContent = 'מעולה! השלמתם את המתיחה.';
+        }
+      }, 100);
+    }
+    function endHold() {
+      if (!interval) return;
+      clearInterval(interval);
+      interval = null;
+      if (progress < 100) {
+        msg.textContent = 'נסו שוב והחזיקו עד הסוף.';
+        bar.style.width = '0%';
+        progress = 0;
+      }
+    }
+  </script>
+</body>
+</html>
