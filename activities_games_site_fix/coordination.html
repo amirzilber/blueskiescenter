@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <link rel="preload" href="img/background.png" as="image">
+  <style>html{background-color:#d9eefa;}</style><title>תיאום עין‑יד</title>
+  <link rel="stylesheet" href="style.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Heebo:wght@300;500;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/></head>
+<body>
+  <header>
+  <a href="https://www.blueskiescenter.com" class="logo-link"><img src="img/logo.png" alt="לוגו" /></a>
+  <h1>מיינדפולנס יד עין</h1>
+  <a class="header-btn" href="https://www.blueskiescenter.com">דף הבית</a>
+</header>
+  <main>
+    <div class="game-container">
+      <div class="instructions">
+        <p>שמרו על ריכוז ותפסו צורות של עננים וקשתות המופיעות במקומות שונים בריבוע לפני שהן נעלמות. כל צורה שתצליחו ללכוד מוסיפה נקודה.</p>
+      </div>
+      <!-- Allow the player to select how many shapes they need to catch -->
+      <div style="text-align:center;margin-bottom:10px;">
+        <label for="roundsSelect">כמה צורות לתפוס:</label>
+        <select id="roundsSelect">
+          <option value="5">5</option>
+          <option value="10" selected>10</option>
+        </select>
+      </div>
+      <div id="coordArea" class="coord-area"></div>
+      <button id="coordStart" class="stretch-button">התחל משחק</button>
+      <p id="coordScore" style="font-weight:bold;text-align:center;margin-top:10px;"></p>
+      <a href="strength.html" class="back-link">חזרה לתפריט חיזוק</a>
+    </div>
+  </main>
+  <script>
+    const area = document.getElementById('coordArea');
+    const startBtn = document.getElementById('coordStart');
+    const scoreEl = document.getElementById('coordScore');
+    const roundsSelect = document.getElementById('roundsSelect');
+    let score = 0;
+    let count = 0;
+    // number of rounds is determined by the player's selection (5 or 10)
+    let maxRounds = parseInt(roundsSelect.value, 10);
+    let activeShape = null;
+    // possible shapes to appear: cloud and rainbow
+    const shapes = ['cloud','rainbow'];
+    function startGame() {
+      // update maxRounds in case the user changed the selection before starting
+      maxRounds = parseInt(roundsSelect.value, 10);
+      score = 0;
+      count = 0;
+      scoreEl.textContent = '';
+      spawnShape();
+    }
+    function spawnShape() {
+      if (activeShape) {
+        activeShape.remove();
+        activeShape = null;
+      }
+      if (count >= maxRounds) {
+        scoreEl.textContent = 'המשחק הסתיים! תפסתם ' + score + ' מתוך ' + maxRounds + ' צורות.';
+        return;
+      }
+      count++;
+      const shape = document.createElement('div');
+      shape.className = 'coord-circle';
+      // choose random type
+      const type = shapes[Math.floor(Math.random() * shapes.length)];
+      if (type === 'cloud') {
+        shape.style.backgroundImage = "url('img/cloud.png')";
+      } else if (type === 'rainbow') {
+        shape.style.backgroundImage = "url('img/rainbow.png')";
+      }
+      shape.style.backgroundSize = 'contain';
+      shape.style.backgroundRepeat = 'no-repeat';
+      // random position within area
+      const areaRect = area.getBoundingClientRect();
+      const size = 50;
+      const x = Math.random() * (areaRect.width - size);
+      const y = Math.random() * (areaRect.height - size);
+      shape.style.width = size + 'px';
+      shape.style.height = size + 'px';
+      shape.style.left = x + 'px';
+      shape.style.top = y + 'px';
+      shape.addEventListener('click', () => {
+        score++;
+        nextRound();
+      });
+      area.appendChild(shape);
+      activeShape = shape;
+      // remove after 2 seconds if not clicked
+      setTimeout(() => {
+        if (activeShape === shape) {
+          nextRound();
+        }
+      }, 2000);
+    }
+    function nextRound() {
+      if (activeShape) {
+        activeShape.remove();
+        activeShape = null;
+      }
+      spawnShape();
+    }
+    startBtn.addEventListener('click', startGame);
+  </script>
+</body>
+</html>

@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <link rel="preload" href="img/background.png" as="image">
+  <style>html{background-color:#d9eefa;}</style><title>נשימת תפוז</title>
+  <link rel="stylesheet" href="style.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Heebo:wght@300;500;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/></head>
+<body>
+  <header>
+  <a href="https://www.blueskiescenter.com" class="logo-link"><img src="img/logo.png" alt="לוגו" /></a>
+  <h1>נשימת תפוז</h1>
+  <a class="header-btn" href="https://www.blueskiescenter.com">דף הבית</a>
+</header>
+  <main>
+    <div class="game-container">
+      <div class="instructions">
+        <p>שבו בנוחות ודמיינו שאתם מתחת לעץ תפוזים. בשאיפה הרימו יד באיטיות וגררו תפוז מהעץ; בנשיפה הורידו אותה וגררו את התפוז לסל. גררו את התפוזים לאורך השאיפה והנשיפה כדי להעבירם לסל.</p>
+      </div>
+      <div id="tree" class="tree"></div>
+      <div id="basket" class="basket"><span id="basketCount">0 תפוזים בסל</span></div>
+      <a href="breathing.html" class="back-link">חזרה לעמוד נשימות</a>
+    </div>
+  </main>
+  <script>
+    const tree = document.getElementById('tree');
+    const basket = document.getElementById('basket');
+    const basketCount = document.getElementById('basketCount');
+    let collected = 0;
+    const oranges = [];
+    function initOranges() {
+      const positions = [
+        { x: 20, y: 30 }, { x: 100, y: 50 }, { x: 50, y: 90 },
+        { x: 140, y: 80 }, { x: 70, y: 20 }
+      ];
+      positions.forEach(pos => {
+        const orange = document.createElement('div');
+        orange.className = 'orange';
+        orange.style.left = pos.x + 'px';
+        orange.style.top = pos.y + 'px';
+        // store original position for reset
+        orange.dataset.origX = pos.x;
+        orange.dataset.origY = pos.y;
+        orange.addEventListener('mousedown', startDrag);
+        orange.addEventListener('touchstart', startDrag);
+        tree.appendChild(orange);
+      });
+    }
+    let dragged = null;
+    function startDrag(e) {
+      e.preventDefault();
+      const orange = e.currentTarget;
+      dragged = orange;
+      const rect = orange.getBoundingClientRect();
+      const offsetX = e.touches ? e.touches[0].clientX - rect.left : e.clientX - rect.left;
+      const offsetY = e.touches ? e.touches[0].clientY - rect.top : e.clientY - rect.top;
+      function onMove(ev) {
+        const clientX = ev.touches ? ev.touches[0].clientX : ev.clientX;
+        const clientY = ev.touches ? ev.touches[0].clientY : ev.clientY;
+        const parentRect = tree.getBoundingClientRect();
+        // calculate relative to tree
+        let x = clientX - parentRect.left - offsetX;
+        let y = clientY - parentRect.top - offsetY;
+        orange.style.transition = 'none';
+        orange.style.left = x + 'px';
+        orange.style.top = y + 'px';
+      }
+      function onEnd(ev) {
+        document.removeEventListener('mousemove', onMove);
+        document.removeEventListener('touchmove', onMove);
+        document.removeEventListener('mouseup', onEnd);
+        document.removeEventListener('touchend', onEnd);
+        // check collision with basket
+        const orangeRect = orange.getBoundingClientRect();
+        const basketRect = basket.getBoundingClientRect();
+        if (orangeRect.right > basketRect.left && orangeRect.left < basketRect.right &&
+            orangeRect.bottom > basketRect.top && orangeRect.top < basketRect.bottom) {
+          collectOrange(orange);
+        } else {
+          // reset to original position
+          orange.style.transition = 'all 0.4s ease';
+          orange.style.left = orange.dataset.origX + 'px';
+          orange.style.top = orange.dataset.origY + 'px';
+        }
+        dragged = null;
+      }
+      document.addEventListener('mousemove', onMove);
+      document.addEventListener('touchmove', onMove);
+      document.addEventListener('mouseup', onEnd);
+      document.addEventListener('touchend', onEnd);
+    }
+    function collectOrange(orange) {
+      orange.remove();
+      collected++;
+      // add a miniature orange image inside the basket
+      const tiny = document.createElement('img');
+      tiny.src = 'img/orange.png';
+      tiny.alt = 'תפוז';
+      tiny.style.width = '24px';
+      tiny.style.margin = '0 2px';
+      basket.appendChild(tiny);
+      basketCount.textContent = collected + ' תפוזים בסל';
+    }
+    initOranges();
+  </script>
+</body>
+</html>

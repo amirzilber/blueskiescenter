@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <link rel="preload" href="img/background.png" as="image">
+  <style>html{background-color:#d9eefa;}</style><title>נשימת חוף‑ים</title>
+  <link rel="stylesheet" href="style.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Heebo:wght@300;500;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/></head>
+<body>
+  <header>
+  <a href="https://www.blueskiescenter.com" class="logo-link"><img src="img/logo.png" alt="לוגו" /></a>
+  <h1>נשימת חוף‑ים</h1>
+  <a class="header-btn" href="https://www.blueskiescenter.com">דף הבית</a>
+</header>
+  <main>
+    <div class="game-container">
+      <div class="instructions">
+        <p>דמיינו את הים. בשאיפה, אוויר נכנס כמו גל המתקרב לחוף; בנשיפה הוציאו צליל "ששש" והרגישו את הגל נסוג. הגל באנימציה יעזור לכם לשמור על הקצב.</p>
+      </div>
+      <div class="wave"></div>
+      <p id="seaPrompt" style="text-align:center;font-size:1.2rem;font-weight:bold;margin-top:20px;"></p>
+      <a href="breathing.html" class="back-link">חזרה לעמוד נשימות</a>
+    </div>
+  </main>
+  <script>
+    const promptEl = document.getElementById('seaPrompt');
+    const phases = [
+      { text: 'שאפו... (4 שניות)', duration: 4000 },
+      { text: 'נשפו "ששש"... (6 שניות)', duration: 6000 }
+    ];
+    let currentPhase = 0;
+    function cycle() {
+      const phase = phases[currentPhase];
+      promptEl.textContent = phase.text;
+      setTimeout(() => {
+        currentPhase = (currentPhase + 1) % phases.length;
+        cycle();
+      }, phase.duration);
+    }
+    cycle();
+  </script>
+</body>
+</html>

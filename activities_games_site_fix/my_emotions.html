@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <link rel="preload" href="img/background.png" as="image">
+  <style>html{background-color:#d9eefa;}</style><title>הרגשות שלי</title>
+  <link rel="stylesheet" href="style.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Heebo:wght@300;500;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/></head>
+<body>
+  <header>
+  <a href="https://www.blueskiescenter.com" class="logo-link"><img src="img/logo.png" alt="לוגו" /></a>
+  <h1>הרגשות שלי</h1>
+  <a class="header-btn" href="https://www.blueskiescenter.com">דף הבית</a>
+</header>
+  <main>
+    <div class="game-container">
+      <div class="instructions">
+        <p>בחרו רגש שמייצג את מה שאתם מרגישים כרגע. לאחר מכן תקבלו הצעה קצרה להתמודדות ולחיזוק התחושה.</p>
+      </div>
+      <div id="emotions" class="emotions-grid">
+        <!-- Use images instead of emoji to represent each emotion -->
+        <div class="emotion" data-name="שמחה" data-key="happy">
+          <img src="img/emotion_happy.png" alt="שמחה" style="width:60px;height:60px;" />
+        </div>
+        <div class="emotion" data-name="עצב" data-key="sad">
+          <img src="img/emotion_sad.png" alt="עצב" style="width:60px;height:60px;" />
+        </div>
+        <div class="emotion" data-name="כעס" data-key="angry">
+          <img src="img/emotion_angry.png" alt="כעס" style="width:60px;height:60px;" />
+        </div>
+        <div class="emotion" data-name="פחד" data-key="fear">
+          <img src="img/emotion_fear.png" alt="פחד" style="width:60px;height:60px;" />
+        </div>
+        <div class="emotion" data-name="הפתעה" data-key="surprised">
+          <img src="img/emotion_surprised.png" alt="הפתעה" style="width:60px;height:60px;" />
+        </div>
+        <div class="emotion" data-name="גאווה" data-key="proud">
+          <img src="img/emotion_proud.png" alt="גאווה" style="width:60px;height:60px;" />
+        </div>
+        <div class="emotion" data-name="בושה" data-key="shame">
+          <img src="img/emotion_shame.png" alt="בושה" style="width:60px;height:60px;" />
+        </div>
+      </div>
+      <p id="emotionInstruction" style="font-weight:bold;text-align:center;margin-top:20px;"></p>
+      <a href="activities.html" class="back-link">חזרה לתפריט פעילויות</a>
+    </div>
+  </main>
+  <script>
+    const emotions = document.querySelectorAll('.emotion');
+    const output = document.getElementById('emotionInstruction');
+    // For each emotion, provide multiple technique suggestions and pick one at random
+    const suggestions = {
+      happy: [
+        'חייכו לאדם שאתם אוהבים.',
+        'שתפו חבר במשהו משמח שקרה.',
+        'כתבו ביומן על רגע משמח מהיום.'
+      ],
+      sad: [
+        'עצמו עיניים ונשמו עמוק שלוש פעמים.',
+        'האזינו לשיר שמרגיע אתכם.',
+        'כתבו איך אתם מרגישים ואז קראו בקול לעצמכם.'
+      ],
+      angry: [
+        'ספרו לאט עד עשר ונשפו את הכעס החוצה.',
+        'צאו להליכה קצרה והרגישו איך הגוף נרגע.',
+        'כתבו על פתק את מה שמכעיס וקרעו אותו.'
+      ],
+      fear: [
+        'דמיינו מקום בטוח וחמים שמרגיע אתכם.',
+        'חבקו בובה או כרית אהובה.',
+        'אמרו לעצמכם בקול: אני בטוח/ה וכרגע אני בסדר.'
+      ],
+      surprised: [
+        'קחו נשימה עמוקה ונסו לזהות מה הפתיע אתכם.',
+        'שתפו חבר או בן משפחה במה שהפתיע אתכם.',
+        'חייכו וגלו סקרנות – לפעמים הפתעות מביאות משהו טוב.'
+      ],
+      proud: [
+        'תנו לעצמכם טפיחה קלה על השכם.',
+        'שתפו מישהו בהישג שאתם גאים בו.',
+        'זכרו את התחושה הטובה הזו לפעם הבאה שתזדקקו לה.'
+      ],
+      shame: [
+        'זכרו שכולנו טועים לפעמים; זה חלק מהלמידה.',
+        'נשמו עמוק ואמרו לעצמכם: מגיע לי חמלה.',
+        'כתבו לעצמכם משפט עידוד קטן ותקראו אותו בקול.'
+      ]
+    };
+    function getSuggestion(key) {
+      const arr = suggestions[key];
+      return arr[Math.floor(Math.random() * arr.length)];
+    }
+    emotions.forEach(el => {
+      el.addEventListener('click', () => {
+        emotions.forEach(e => e.classList.remove('selected'));
+        el.classList.add('selected');
+        const key = el.getAttribute('data-key');
+        const name = el.getAttribute('data-name');
+        const suggestion = getSuggestion(key);
+        output.textContent = name + ': ' + suggestion;
+      });
+    });
+  </script>
+</body>
+</html>
