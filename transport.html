@@ -1,0 +1,859 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>מערכת הסעות — מרכז שמיים כחולים</title>
+  <link rel="stylesheet" href="style.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Heebo:wght@300;500;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
+  <style>
+    body { font-family: 'Heebo', sans-serif; background: #f0f6ff; }
+
+    main { max-width: 860px; margin: 0 auto; padding: 20px; }
+
+    /* ── Tabs ── */
+    .tabs {
+      display: flex;
+      gap: 6px;
+      border-bottom: 3px solid #2a6fb1;
+      margin-bottom: 22px;
+    }
+    .tab-btn {
+      padding: 10px 22px;
+      border: none;
+      border-radius: 8px 8px 0 0;
+      background: #ddeaf8;
+      color: #2a6fb1;
+      font-family: 'Heebo', sans-serif;
+      font-size: 0.97rem;
+      font-weight: 500;
+      cursor: pointer;
+      transition: background 0.18s, color 0.18s;
+    }
+    .tab-btn.active { background: #2a6fb1; color: #fff; }
+    .tab-btn:hover:not(.active) { background: #c5daf0; }
+
+    .tab-panel { display: none; }
+    .tab-panel.active { display: block; }
+
+    /* ── Cards ── */
+    .card {
+      background: #fff;
+      border-radius: 12px;
+      padding: 20px 24px;
+      margin-bottom: 20px;
+      box-shadow: 0 2px 10px rgba(42,111,177,0.08);
+    }
+    .card h2 {
+      color: #2a6fb1;
+      font-size: 1.1rem;
+      margin: 0 0 16px;
+      padding-bottom: 10px;
+      border-bottom: 2px solid #e8f0fa;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    /* ── Forms ── */
+    .form-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      align-items: flex-end;
+      margin-bottom: 14px;
+    }
+    .fg {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      flex: 1;
+      min-width: 130px;
+    }
+    .fg label { font-size: 0.82rem; color: #555; font-weight: 500; }
+    .fg input, .fg select {
+      padding: 8px 11px;
+      border: 1.5px solid #c0d8f0;
+      border-radius: 8px;
+      font-size: 0.93rem;
+      font-family: 'Heebo', sans-serif;
+      background: #f6faff;
+      color: #333;
+      transition: border-color 0.18s;
+    }
+    .fg input:focus, .fg select:focus {
+      outline: none;
+      border-color: #2a6fb1;
+      background: #fff;
+    }
+
+    /* ── Buttons ── */
+    .btn {
+      padding: 8px 18px;
+      border: none;
+      border-radius: 8px;
+      font-family: 'Heebo', sans-serif;
+      font-size: 0.9rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background 0.18s, transform 0.1s;
+      white-space: nowrap;
+    }
+    .btn:active { transform: scale(0.97); }
+    .btn-primary { background: #2a6fb1; color: #fff; }
+    .btn-primary:hover { background: #1e5a9a; }
+    .btn-red { background: #fde8e8; color: #c0392b; }
+    .btn-red:hover { background: #e87c7c; color: #fff; }
+    .btn-green { background: #e6f4ea; color: #2e7d32; }
+    .btn-green:hover { background: #a5d6a7; color: #1b5e20; }
+    .btn-gray { background: #e5edf5; color: #2a6fb1; }
+    .btn-gray:hover { background: #c5d8ef; }
+    .btn-sm { padding: 4px 12px; font-size: 0.8rem; }
+
+    /* ── Lists ── */
+    .item-list { display: flex; flex-direction: column; gap: 8px; }
+    .item-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 10px 14px;
+      background: #f6faff;
+      border-radius: 8px;
+      border: 1px solid #ddeaf8;
+    }
+    .item-row .name { flex: 1; font-weight: 600; }
+    .item-row .sub { font-size: 0.82rem; color: #7a90a8; margin-top: 2px; }
+    .badge-num {
+      width: 28px; height: 28px;
+      border-radius: 50%;
+      background: #2a6fb1;
+      color: #fff;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 0.82rem; font-weight: 700;
+      flex-shrink: 0;
+    }
+
+    /* ── Shift cards ── */
+    .shift-card {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 12px 16px;
+      background: #f6faff;
+      border: 1.5px solid #c0d8f0;
+      border-radius: 10px;
+      margin-bottom: 8px;
+      cursor: pointer;
+      transition: border-color 0.18s, background 0.18s;
+    }
+    .shift-card:hover { border-color: #2a6fb1; background: #eef5fb; }
+    .shift-card.active { border-color: #2a6fb1; background: #ddeaf8; }
+    .shift-date { font-weight: 700; color: #2a6fb1; font-size: 0.97rem; }
+    .shift-time { color: #555; font-size: 0.9rem; }
+    .shift-label { color: #888; font-size: 0.88rem; }
+    .shift-counters { margin-right: auto; display: flex; gap: 6px; flex-wrap: wrap; }
+    .cnt {
+      border-radius: 20px;
+      padding: 2px 10px;
+      font-size: 0.78rem;
+      font-weight: 600;
+    }
+    .cnt-to { background: #2a6fb1; color: #fff; }
+    .cnt-from { background: #e67e22; color: #fff; }
+
+    /* ── Worker checkboxes ── */
+    .worker-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(190px, 1fr));
+      gap: 8px;
+      margin-top: 12px;
+    }
+    .wc-label {
+      display: flex;
+      align-items: center;
+      gap: 9px;
+      padding: 9px 12px;
+      background: #f6faff;
+      border: 1.5px solid #ddeaf8;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: border-color 0.18s, background 0.18s;
+      user-select: none;
+    }
+    .wc-label.checked { border-color: #2a6fb1; background: #eef5fb; }
+    .wc-label input[type="checkbox"] { accent-color: #2a6fb1; width: 16px; height: 16px; flex-shrink: 0; }
+    .wc-name { font-weight: 600; font-size: 0.9rem; }
+    .wc-apt { font-size: 0.76rem; color: #7a90a8; }
+
+    /* ── Direction pills ── */
+    .dir-toggle { display: flex; gap: 8px; margin-bottom: 14px; flex-wrap: wrap; }
+    .dir-btn {
+      flex: 1;
+      min-width: 150px;
+      padding: 11px 16px;
+      border: 2px solid #c0d8f0;
+      border-radius: 10px;
+      background: #fff;
+      font-family: 'Heebo', sans-serif;
+      font-size: 0.95rem;
+      font-weight: 600;
+      color: #7a90a8;
+      cursor: pointer;
+      transition: all 0.18s;
+    }
+    .dir-btn.active-to { border-color: #2a6fb1; background: #eef5fb; color: #2a6fb1; }
+    .dir-btn.active-from { border-color: #e67e22; background: #fef5ec; color: #e67e22; }
+
+    /* ── Route stops ── */
+    .route-stop { display: flex; gap: 14px; align-items: stretch; }
+    .stop-spine { display: flex; flex-direction: column; align-items: center; flex-shrink: 0; }
+    .stop-circle {
+      width: 36px; height: 36px;
+      border-radius: 50%;
+      background: #2a6fb1;
+      color: #fff;
+      font-weight: 700;
+      font-size: 0.92rem;
+      display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0;
+    }
+    .stop-line { width: 2px; flex: 1; min-height: 16px; background: #c0d8f0; margin: 3px 0; }
+    .stop-card {
+      flex: 1;
+      background: #fff;
+      border: 1.5px solid #c0d8f0;
+      border-radius: 10px;
+      padding: 12px 16px;
+      margin-bottom: 8px;
+    }
+    .stop-apt { font-weight: 700; color: #2a6fb1; font-size: 1rem; }
+    .stop-addr { font-size: 0.83rem; color: #7a90a8; margin: 3px 0 7px; }
+    .stop-workers { display: flex; flex-wrap: wrap; gap: 6px; }
+    .worker-pill {
+      background: #eef5fb;
+      border: 1px solid #c0d8f0;
+      border-radius: 20px;
+      padding: 2px 11px;
+      font-size: 0.82rem;
+      color: #2a6fb1;
+    }
+    .stop-dest .stop-circle { background: #2e7d32; }
+    .stop-dest .stop-card { background: #e8f5e9; border-color: #a5d6a7; }
+    .stop-dest .stop-apt { color: #2e7d32; }
+    .stop-dest-from .stop-circle { background: #e67e22; }
+    .stop-dest-from .stop-card { background: #fef5ec; border-color: #f0c080; }
+    .stop-dest-from .stop-apt { color: #e67e22; }
+
+    /* ── Summary bar ── */
+    .route-summary {
+      padding: 11px 16px;
+      background: #eef5fb;
+      border-radius: 8px;
+      border: 1px solid #c0d8f0;
+      margin-bottom: 16px;
+      font-size: 0.92rem;
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      flex-wrap: wrap;
+    }
+    .route-summary strong { color: #2a6fb1; }
+
+    /* ── Empty state ── */
+    .empty {
+      text-align: center;
+      color: #aac;
+      padding: 32px 0;
+      font-size: 0.97rem;
+    }
+    .empty i { font-size: 2.2rem; display: block; margin-bottom: 10px; opacity: 0.5; }
+
+    /* ── Toast ── */
+    #toast {
+      position: fixed;
+      bottom: 22px;
+      left: 50%;
+      transform: translateX(-50%) translateY(80px);
+      background: #2a6fb1;
+      color: #fff;
+      padding: 11px 26px;
+      border-radius: 8px;
+      font-size: 0.93rem;
+      font-family: 'Heebo', sans-serif;
+      box-shadow: 0 4px 14px rgba(0,0,0,0.18);
+      z-index: 9999;
+      transition: transform 0.28s ease;
+    }
+    #toast.show { transform: translateX(-50%) translateY(0); }
+
+    @media (max-width: 580px) {
+      .form-row { flex-direction: column; }
+      .dir-toggle { flex-direction: column; }
+      .tabs { gap: 3px; }
+      .tab-btn { padding: 8px 12px; font-size: 0.85rem; }
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <a href="https://www.blueskiescenter.com" class="logo-link">
+    <img src="img/logo.png" alt="לוגו" style="height:48px;width:auto;">
+  </a>
+  <h1>מערכת הסעות</h1>
+  <a class="header-btn" href="index.html">דף הבית</a>
+</header>
+
+<main>
+
+  <!-- Tab bar -->
+  <div class="tabs" role="tablist">
+    <button class="tab-btn active" onclick="showTab('admin')" id="tbtn-admin">
+      <i class="fas fa-cog"></i> ניהול
+    </button>
+    <button class="tab-btn" onclick="showTab('shifts')" id="tbtn-shifts">
+      <i class="fas fa-calendar-alt"></i> משמרות
+    </button>
+    <button class="tab-btn" onclick="showTab('route')" id="tbtn-route">
+      <i class="fas fa-route"></i> מסלול
+    </button>
+  </div>
+
+  <!-- ════════════════════════════════════════════════
+       TAB 1 — ניהול דירות ועובדים
+       ════════════════════════════════════════════════ -->
+  <div class="tab-panel active" id="panel-admin">
+
+    <!-- דירות -->
+    <div class="card">
+      <h2><i class="fas fa-home"></i> דירות</h2>
+      <div class="form-row">
+        <div class="fg" style="max-width:60px;">
+          <label>מס׳ סדר</label>
+          <input type="number" id="apt-order" placeholder="1" min="1" max="99">
+        </div>
+        <div class="fg">
+          <label>שם הדירה</label>
+          <input type="text" id="apt-name" placeholder="דירה 1">
+        </div>
+        <div class="fg" style="flex:2;">
+          <label>כתובת (אופציונלי)</label>
+          <input type="text" id="apt-addr" placeholder="רחוב האביב 5, תל אביב">
+        </div>
+        <button class="btn btn-primary" onclick="addApt()"><i class="fas fa-plus"></i> הוסף</button>
+      </div>
+      <div class="item-list" id="apt-list"></div>
+    </div>
+
+    <!-- עובדים -->
+    <div class="card">
+      <h2><i class="fas fa-users"></i> עובדים</h2>
+      <div class="form-row">
+        <div class="fg" style="flex:2;">
+          <label>שם העובד</label>
+          <input type="text" id="w-name" placeholder="שם פרטי ומשפחה">
+        </div>
+        <div class="fg">
+          <label>דירה</label>
+          <select id="w-apt"><option value="">— בחר דירה —</option></select>
+        </div>
+        <button class="btn btn-primary" onclick="addWorker()"><i class="fas fa-plus"></i> הוסף</button>
+      </div>
+      <div class="item-list" id="worker-list"></div>
+    </div>
+
+  </div>
+
+  <!-- ════════════════════════════════════════════════
+       TAB 2 — משמרות
+       ════════════════════════════════════════════════ -->
+  <div class="tab-panel" id="panel-shifts">
+
+    <!-- יצירת משמרת -->
+    <div class="card">
+      <h2><i class="fas fa-plus-circle"></i> משמרת חדשה</h2>
+      <div class="form-row">
+        <div class="fg">
+          <label>תאריך</label>
+          <input type="date" id="sh-date">
+        </div>
+        <div class="fg" style="max-width:130px;">
+          <label>שעה</label>
+          <input type="time" id="sh-time">
+        </div>
+        <div class="fg">
+          <label>תיאור (אופציונלי)</label>
+          <input type="text" id="sh-label" placeholder="בוקר, ערב…">
+        </div>
+        <button class="btn btn-primary" onclick="addShift()"><i class="fas fa-plus"></i> צור</button>
+      </div>
+    </div>
+
+    <!-- רשימת משמרות -->
+    <div class="card">
+      <h2><i class="fas fa-list"></i> משמרות קיימות</h2>
+      <div id="shift-list"></div>
+    </div>
+
+    <!-- רישום עובדים למשמרת שנבחרה -->
+    <div class="card" id="reg-panel" style="display:none;">
+      <h2 id="reg-title"><i class="fas fa-user-check"></i> מי צריך הסעה?</h2>
+
+      <!-- כיוון -->
+      <div class="dir-toggle">
+        <button class="dir-btn active-to" id="reg-dir-to"   onclick="setRegDir('to')">🚌 לעבודה</button>
+        <button class="dir-btn"           id="reg-dir-from" onclick="setRegDir('from')">🏠 מהעבודה</button>
+      </div>
+
+      <div class="worker-grid" id="worker-checks"></div>
+
+      <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:14px;">
+        <button class="btn btn-gray" onclick="selectAll(true)"><i class="fas fa-check-double"></i> בחר הכל</button>
+        <button class="btn btn-gray" onclick="selectAll(false)"><i class="fas fa-times"></i> נקה</button>
+        <button class="btn btn-green" onclick="showTab('route')"><i class="fas fa-route"></i> צפה במסלול</button>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- ════════════════════════════════════════════════
+       TAB 3 — מסלול
+       ════════════════════════════════════════════════ -->
+  <div class="tab-panel" id="panel-route">
+    <div class="card">
+      <h2><i class="fas fa-route"></i> מסלול הסעה</h2>
+
+      <div class="form-row" style="margin-bottom:16px;">
+        <div class="fg">
+          <label>בחר משמרת</label>
+          <select id="route-sel" onchange="renderRoute()">
+            <option value="">— בחר משמרת —</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="dir-toggle" id="route-dir-toggle" style="display:none;">
+        <button class="dir-btn active-to" id="rdir-to" onclick="setRouteDir('to')">🚌 לעבודה — סדר איסוף</button>
+        <button class="dir-btn" id="rdir-from" onclick="setRouteDir('from')">🏠 מהעבודה — סדר הורדה</button>
+      </div>
+
+      <div id="route-display"></div>
+    </div>
+  </div>
+
+</main>
+
+<div id="toast"></div>
+
+<script>
+// ─────────────────────────────────────────────────────────────────
+//  Tiny data layer (localStorage)
+// ─────────────────────────────────────────────────────────────────
+const db = {
+  get: k => JSON.parse(localStorage.getItem('tr_' + k) || '[]'),
+  set: (k, v) => localStorage.setItem('tr_' + k, JSON.stringify(v)),
+};
+const uid = () => Math.random().toString(36).slice(2, 9);
+
+// ─────────────────────────────────────────────────────────────────
+//  Toast
+// ─────────────────────────────────────────────────────────────────
+function toast(msg) {
+  const el = document.getElementById('toast');
+  el.textContent = msg;
+  el.classList.add('show');
+  setTimeout(() => el.classList.remove('show'), 2400);
+}
+
+// ─────────────────────────────────────────────────────────────────
+//  Tabs
+// ─────────────────────────────────────────────────────────────────
+function showTab(name) {
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+  document.getElementById('tbtn-' + name).classList.add('active');
+  document.getElementById('panel-' + name).classList.add('active');
+  if (name === 'route') { fillRouteSelect(); renderRoute(); }
+  if (name === 'shifts') renderShifts();
+}
+
+// ─────────────────────────────────────────────────────────────────
+//  APARTMENTS
+// ─────────────────────────────────────────────────────────────────
+function addApt() {
+  const name  = document.getElementById('apt-name').value.trim();
+  const addr  = document.getElementById('apt-addr').value.trim();
+  const order = parseInt(document.getElementById('apt-order').value) || 99;
+  if (!name) { toast('נא להזין שם דירה'); return; }
+  const list = db.get('apts');
+  list.push({ id: uid(), name, addr, order });
+  list.sort((a, b) => a.order - b.order);
+  db.set('apts', list);
+  ['apt-name', 'apt-addr', 'apt-order'].forEach(id => document.getElementById(id).value = '');
+  renderApts();
+  fillWorkerAptSelect();
+  toast('הדירה נוספה ✓');
+}
+
+function deleteApt(id) {
+  if (!confirm('למחוק את הדירה?')) return;
+  db.set('apts', db.get('apts').filter(a => a.id !== id));
+  renderApts();
+  fillWorkerAptSelect();
+  toast('הדירה נמחקה');
+}
+
+function renderApts() {
+  const list = db.get('apts');
+  const el = document.getElementById('apt-list');
+  if (!list.length) {
+    el.innerHTML = '<div class="empty"><i class="fas fa-home"></i>לא הוגדרו דירות</div>';
+    return;
+  }
+  el.innerHTML = list.map(a => `
+    <div class="item-row">
+      <div class="badge-num">${a.order}</div>
+      <div style="flex:1">
+        <div class="name">${esc(a.name)}</div>
+        ${a.addr ? `<div class="sub"><i class="fas fa-map-marker-alt"></i> ${esc(a.addr)}</div>` : ''}
+      </div>
+      <button class="btn btn-red btn-sm" onclick="deleteApt('${a.id}')"><i class="fas fa-trash"></i></button>
+    </div>
+  `).join('');
+}
+
+// ─────────────────────────────────────────────────────────────────
+//  WORKERS
+// ─────────────────────────────────────────────────────────────────
+function fillWorkerAptSelect() {
+  const sel = document.getElementById('w-apt');
+  const apts = db.get('apts');
+  sel.innerHTML = '<option value="">— בחר דירה —</option>' +
+    apts.map(a => `<option value="${a.id}">${esc(a.name)}</option>`).join('');
+}
+
+function addWorker() {
+  const name  = document.getElementById('w-name').value.trim();
+  const aptId = document.getElementById('w-apt').value;
+  if (!name)  { toast('נא להזין שם עובד'); return; }
+  if (!aptId) { toast('נא לבחור דירה'); return; }
+  const list = db.get('workers');
+  list.push({ id: uid(), name, aptId });
+  db.set('workers', list);
+  ['w-name', 'w-apt'].forEach(id => document.getElementById(id).value = '');
+  renderWorkers();
+  toast('העובד נוסף ✓');
+}
+
+function deleteWorker(id) {
+  if (!confirm('למחוק את העובד?')) return;
+  db.set('workers', db.get('workers').filter(w => w.id !== id));
+  renderWorkers();
+  toast('העובד נמחק');
+}
+
+function renderWorkers() {
+  const workers = db.get('workers');
+  const aptMap  = aptById();
+  const el = document.getElementById('worker-list');
+  if (!workers.length) {
+    el.innerHTML = '<div class="empty"><i class="fas fa-users"></i>לא הוגדרו עובדים</div>';
+    return;
+  }
+  el.innerHTML = workers.map(w => {
+    const apt = aptMap[w.aptId];
+    return `
+      <div class="item-row">
+        <i class="fas fa-user" style="color:#2a6fb1;font-size:1.1rem;"></i>
+        <div style="flex:1">
+          <div class="name">${esc(w.name)}</div>
+          <div class="sub">${apt ? esc(apt.name) : '—'}</div>
+        </div>
+        <button class="btn btn-red btn-sm" onclick="deleteWorker('${w.id}')"><i class="fas fa-trash"></i></button>
+      </div>
+    `;
+  }).join('');
+}
+
+// ─────────────────────────────────────────────────────────────────
+//  SHIFTS
+// ─────────────────────────────────────────────────────────────────
+function addShift() {
+  const date  = document.getElementById('sh-date').value;
+  const time  = document.getElementById('sh-time').value;
+  const label = document.getElementById('sh-label').value.trim();
+  if (!date) { toast('נא לבחור תאריך'); return; }
+  if (!time) { toast('נא להזין שעה'); return; }
+  const list = db.get('shifts');
+  list.push({ id: uid(), date, time, label, regs: { to: [], from: [] } });
+  list.sort((a, b) => (a.date + a.time).localeCompare(b.date + b.time));
+  db.set('shifts', list);
+  ['sh-date', 'sh-time', 'sh-label'].forEach(id => document.getElementById(id).value = '');
+  // reset date to today
+  document.getElementById('sh-date').valueAsDate = new Date();
+  renderShifts();
+  toast('המשמרת נוצרה ✓');
+}
+
+function deleteShift(id) {
+  if (!confirm('למחוק משמרת זו?')) return;
+  db.set('shifts', db.get('shifts').filter(s => s.id !== id));
+  if (selectedShift === id) { selectedShift = null; document.getElementById('reg-panel').style.display = 'none'; }
+  renderShifts();
+  toast('המשמרת נמחקה');
+}
+
+let selectedShift = null;
+
+function pickShift(id) {
+  selectedShift = id;
+  renderShifts();
+  const s = db.get('shifts').find(x => x.id === id);
+  const panel = document.getElementById('reg-panel');
+  panel.style.display = 'block';
+  const d = fmtDate(s.date);
+  document.getElementById('reg-title').innerHTML =
+    `<i class="fas fa-user-check"></i> מי צריך הסעה? — ${d} ${s.time}${s.label ? ' (' + esc(s.label) + ')' : ''}`;
+  regDir = 'to';
+  document.getElementById('reg-dir-to').className = 'dir-btn active-to';
+  document.getElementById('reg-dir-from').className = 'dir-btn';
+  renderWorkerChecks();
+  panel.scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+
+function renderShifts() {
+  const el = document.getElementById('shift-list');
+  const list = db.get('shifts');
+  if (!list.length) {
+    el.innerHTML = '<div class="empty"><i class="fas fa-calendar-times"></i>אין משמרות. צור משמרת חדשה למעלה.</div>';
+    return;
+  }
+  el.innerHTML = list.map(s => {
+    const tc = (s.regs?.to   || []).length;
+    const fc = (s.regs?.from || []).length;
+    const active = s.id === selectedShift ? ' active' : '';
+    return `
+      <div class="shift-card${active}" onclick="pickShift('${s.id}')">
+        <i class="fas fa-calendar-day" style="color:#2a6fb1;font-size:1.1rem;"></i>
+        <span class="shift-date">${fmtDate(s.date)}</span>
+        <span class="shift-time"><i class="fas fa-clock"></i> ${s.time}</span>
+        ${s.label ? `<span class="shift-label">${esc(s.label)}</span>` : ''}
+        <span class="shift-counters">
+          ${tc ? `<span class="cnt cnt-to">🚌 ${tc}</span>` : ''}
+          ${fc ? `<span class="cnt cnt-from">🏠 ${fc}</span>` : ''}
+        </span>
+        <button class="btn btn-red btn-sm" onclick="event.stopPropagation();deleteShift('${s.id}')">
+          <i class="fas fa-trash"></i>
+        </button>
+      </div>
+    `;
+  }).join('');
+}
+
+// ─────────────────────────────────────────────────────────────────
+//  WORKER REGISTRATION
+// ─────────────────────────────────────────────────────────────────
+let regDir = 'to';
+
+function setRegDir(dir) {
+  regDir = dir;
+  document.getElementById('reg-dir-to').className   = 'dir-btn' + (dir === 'to'   ? ' active-to'   : '');
+  document.getElementById('reg-dir-from').className = 'dir-btn' + (dir === 'from' ? ' active-from' : '');
+  renderWorkerChecks();
+}
+
+function renderWorkerChecks() {
+  if (!selectedShift) return;
+  const shift   = db.get('shifts').find(s => s.id === selectedShift);
+  if (!shift) return;
+  const checked = new Set(shift.regs?.[regDir] || []);
+  const workers = db.get('workers');
+  const aptMap  = aptById();
+  const el = document.getElementById('worker-checks');
+  if (!workers.length) {
+    el.innerHTML = '<div class="empty"><i class="fas fa-users"></i>הוסף עובדים בלשונית "ניהול"</div>';
+    return;
+  }
+  el.innerHTML = workers.map(w => {
+    const apt = aptMap[w.aptId];
+    const on  = checked.has(w.id);
+    return `
+      <label class="wc-label ${on ? 'checked' : ''}" for="cb-${w.id}">
+        <input type="checkbox" id="cb-${w.id}" ${on ? 'checked' : ''}
+          onchange="toggleReg('${w.id}', this.checked);
+                    this.closest('.wc-label').classList.toggle('checked', this.checked)">
+        <div>
+          <div class="wc-name">${esc(w.name)}</div>
+          <div class="wc-apt">${apt ? esc(apt.name) : ''}</div>
+        </div>
+      </label>
+    `;
+  }).join('');
+}
+
+function toggleReg(wid, on) {
+  const shifts = db.get('shifts');
+  const shift  = shifts.find(s => s.id === selectedShift);
+  if (!shift) return;
+  if (!shift.regs) shift.regs = { to: [], from: [] };
+  if (!shift.regs[regDir]) shift.regs[regDir] = [];
+  if (on) {
+    if (!shift.regs[regDir].includes(wid)) shift.regs[regDir].push(wid);
+  } else {
+    shift.regs[regDir] = shift.regs[regDir].filter(x => x !== wid);
+  }
+  db.set('shifts', shifts);
+  renderShifts();
+}
+
+function selectAll(val) {
+  document.querySelectorAll('#worker-checks input[type="checkbox"]').forEach(cb => {
+    if (cb.checked !== val) {
+      cb.checked = val;
+      cb.closest('.wc-label').classList.toggle('checked', val);
+      toggleReg(cb.id.replace('cb-', ''), val);
+    }
+  });
+}
+
+// ─────────────────────────────────────────────────────────────────
+//  ROUTE
+// ─────────────────────────────────────────────────────────────────
+let routeDir = 'to';
+
+function setRouteDir(dir) {
+  routeDir = dir;
+  document.getElementById('rdir-to').className   = 'dir-btn' + (dir === 'to'   ? ' active-to'   : '');
+  document.getElementById('rdir-from').className = 'dir-btn' + (dir === 'from' ? ' active-from' : '');
+  renderRoute();
+}
+
+function fillRouteSelect() {
+  const sel    = document.getElementById('route-sel');
+  const prev   = sel.value;
+  const shifts = db.get('shifts');
+  sel.innerHTML = '<option value="">— בחר משמרת —</option>' +
+    shifts.map(s => {
+      const d = s.date.split('-').reverse().join('/');
+      return `<option value="${s.id}">${d} ${s.time}${s.label ? ' — ' + esc(s.label) : ''}</option>`;
+    }).join('');
+  if (prev) sel.value = prev;
+  // auto-select last selected shift
+  if (!sel.value && selectedShift) sel.value = selectedShift;
+}
+
+function renderRoute() {
+  const shiftId = document.getElementById('route-sel').value;
+  const display = document.getElementById('route-display');
+  const toggle  = document.getElementById('route-dir-toggle');
+
+  if (!shiftId) {
+    toggle.style.display = 'none';
+    display.innerHTML = '<div class="empty"><i class="fas fa-route"></i>בחר משמרת לצפייה במסלול</div>';
+    return;
+  }
+
+  const shift = db.get('shifts').find(s => s.id === shiftId);
+  if (!shift) { display.innerHTML = ''; return; }
+
+  toggle.style.display = 'flex';
+
+  const workerIds = shift.regs?.[routeDir] || [];
+  if (!workerIds.length) {
+    display.innerHTML = `<div class="empty"><i class="fas fa-bus"></i>
+      אין עובדים רשומים להסעה ${routeDir === 'to' ? 'לעבודה' : 'מהעבודה'}</div>`;
+    return;
+  }
+
+  const workers = db.get('workers');
+  const apts    = db.get('apts');
+  const aptMap  = aptById();
+
+  // Group workers by apartment
+  const byApt = {};
+  workerIds.forEach(wid => {
+    const w = workers.find(x => x.id === wid);
+    if (!w) return;
+    if (!byApt[w.aptId]) byApt[w.aptId] = [];
+    byApt[w.aptId].push(w.name);
+  });
+
+  // Stops = only apartments with registered workers, sorted by route order
+  let stops = apts.filter(a => byApt[a.id]).sort((a, b) => a.order - b.order);
+  if (routeDir === 'from') stops = [...stops].reverse();
+
+  const d = fmtDate(shift.date);
+  const workerCount = workerIds.length;
+  const dirLabel = routeDir === 'to' ? '🚌 לעבודה' : '🏠 מהעבודה';
+
+  display.innerHTML = `
+    <div class="route-summary">
+      <strong>${d} ${shift.time}${shift.label ? ' — ' + esc(shift.label) : ''}</strong>
+      <span>${dirLabel}</span>
+      <span><strong>${workerCount}</strong> עובדים</span>
+      <span><strong>${stops.length}</strong> עצירות</span>
+    </div>
+    ${stops.map((apt, i) => `
+      <div class="route-stop">
+        <div class="stop-spine">
+          <div class="stop-circle">${i + 1}</div>
+          ${i < stops.length - 1 ? '<div class="stop-line"></div>' : '<div class="stop-line"></div>'}
+        </div>
+        <div class="stop-card">
+          <div class="stop-apt">${esc(apt.name)}</div>
+          ${apt.addr ? `<div class="stop-addr"><i class="fas fa-map-marker-alt"></i> ${esc(apt.addr)}</div>` : ''}
+          <div class="stop-workers">
+            ${byApt[apt.id].map(n => `<span class="worker-pill">${esc(n)}</span>`).join('')}
+          </div>
+        </div>
+      </div>
+    `).join('')}
+    <div class="route-stop ${routeDir === 'to' ? 'stop-dest' : 'stop-dest-from'}">
+      <div class="stop-spine">
+        <div class="stop-circle">
+          <i class="fas fa-${routeDir === 'to' ? 'building' : 'flag-checkered'}"></i>
+        </div>
+      </div>
+      <div class="stop-card">
+        <div class="stop-apt">${routeDir === 'to' ? '🏢 יעד — מקום העבודה' : '🏁 סיום מסלול'}</div>
+      </div>
+    </div>
+  `;
+}
+
+// ─────────────────────────────────────────────────────────────────
+//  Helpers
+// ─────────────────────────────────────────────────────────────────
+function aptById() {
+  return Object.fromEntries(db.get('apts').map(a => [a.id, a]));
+}
+
+function fmtDate(str) {
+  const days = ['ראשון','שני','שלישי','רביעי','חמישי','שישי','שבת'];
+  const [y, m, d] = str.split('-');
+  const day = new Date(str + 'T12:00').getDay();
+  return `יום ${days[day]} ${d}/${m}/${y}`;
+}
+
+function esc(s) {
+  return String(s)
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;');
+}
+
+// ─────────────────────────────────────────────────────────────────
+//  Init
+// ─────────────────────────────────────────────────────────────────
+document.getElementById('sh-date').valueAsDate = new Date();
+renderApts();
+fillWorkerAptSelect();
+renderWorkers();
+renderShifts();
+</script>
+</body>
+</html>
